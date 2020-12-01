@@ -2,6 +2,10 @@
 
 use Label305\XlsxExtractor\Basic\BasicExtractor;
 use Label305\XlsxExtractor\Basic\BasicInjector;
+use Label305\XlsxExtractor\Decorated\DecoratedTextExtractor;
+use Label305\XlsxExtractor\Decorated\DecoratedTextInjector;
+use Label305\XlsxExtractor\Decorated\SharedString;
+use Label305\XlsxExtractor\Decorated\SharedStringPart;
 
 class ExtractionTest extends TestCase {
 
@@ -52,6 +56,74 @@ class ExtractionTest extends TestCase {
         unlink(__DIR__.'/fixtures/simple-duplicate-text-extracted.xlsx');
         unlink(__DIR__.'/fixtures/simple-duplicate-text-injected-extracted.xlsx');
         unlink(__DIR__.'/fixtures/simple-duplicate-text-injected.xlsx');
+    }
+
+    public function test_markup() {
+
+        $extractor = new DecoratedTextExtractor();
+        $mapping = $extractor->extractStringsAndCreateMappingFile(__DIR__.'/fixtures/markup.xlsx', __DIR__.'/fixtures/markup-extracted.xlsx');
+
+        $this->assertEquals("Title for sheet", $mapping[0][0]->text);
+        $this->assertEquals("This is another description with parially ", $mapping[7][0]->text);
+        $this->assertEquals("bold", $mapping[7][1]->text);
+        $this->assertEquals(" and ", $mapping[7][2]->text);
+        $this->assertEquals("colored", $mapping[7][3]->text);
+        $this->assertEquals(" text", $mapping[7][4]->text);
+        $this->assertEquals('This is another description with parially <strong>bold</strong> and <strong>colored</strong> text', $mapping[7]->toHTML());
+
+        $mapping[0][0]->text = "Titel voor sheet";
+        $mapping[7][0]->text = "Dit is een andere omschrijving met deels ";
+        $mapping[7][1]->text = "dikgedrukt";
+        $mapping[7][2]->text = " en ";
+        $mapping[7][3]->text = "gekleurde";
+        $mapping[7][4]->text = " tekst";
+
+        $injector = new DecoratedTextInjector();
+        $injector->injectMappingAndCreateNewFile($mapping, __DIR__. '/fixtures/markup-extracted.xlsx', __DIR__. '/fixtures/markup-injected.xlsx');
+
+        $otherExtractor = new DecoratedTextExtractor();
+        $otherMapping = $otherExtractor->extractStringsAndCreateMappingFile(__DIR__. '/fixtures/markup-injected.xlsx', __DIR__. '/fixtures/markup-injected-extracted.xlsx');
+
+        $this->assertEquals("Titel voor sheet", $otherMapping[0][0]->text);
+        $this->assertEquals("Dit is een andere omschrijving met deels ", $otherMapping[7][0]->text);
+        $this->assertEquals("dikgedrukt", $otherMapping[7][1]->text);
+        $this->assertEquals(" en ", $otherMapping[7][2]->text);
+        $this->assertEquals("gekleurde", $otherMapping[7][3]->text);
+        $this->assertEquals(" tekst", $otherMapping[7][4]->text);
+
+        unlink(__DIR__.'/fixtures/markup-extracted.xlsx');
+        unlink(__DIR__.'/fixtures/markup-injected-extracted.xlsx');
+        unlink(__DIR__.'/fixtures/markup-injected.xlsx');
+    }
+
+    public function test_sharedString_toHtml()
+    {
+        $sharedString = new SharedString();
+        $sharedString[] = new SharedStringPart('This is a test with ');
+        $sharedString[] = new SharedStringPart('bold' , true);
+        $sharedString[] = new SharedStringPart(' and ');
+        $sharedString[] = new SharedStringPart('italic' , false, true);
+
+        $this->assertEquals('This is a test with <strong>bold</strong> and <em>italic</em>', $sharedString->toHTML());
+    }
+
+    public function test_sharedString_fillWithHTMLDom()
+    {
+        $html = 'This is a test with <strong>bold</strong> and <em>italic</em>';
+        $html = "<html>" . $html . "</html>";
+
+        $htmlDom = new DOMDocument;
+        @$htmlDom->loadXml($html);
+
+        $sharedString = new SharedString();
+        $sharedString->fillWithHTMLDom($htmlDom->documentElement);
+
+        $this->assertEquals('This is a test with ', $sharedString[0]->text);
+        $this->assertEquals('bold', $sharedString[1]->text);
+        $this->assertTrue($sharedString[1]->bold);
+        $this->assertEquals(' and ', $sharedString[2]->text);
+        $this->assertEquals('italic', $sharedString[3]->text);
+        $this->assertTrue($sharedString[3]->italic);
     }
     
 }

@@ -51,6 +51,38 @@ $injector->injectMappingAndCreateNewFile(
   );
 ```
 
+Advanced usage
+----
+
+The library is also equiped with a `DecoratedTextExtractor` and `DecoratedTextInjector` with which you can manipulate basic paragraph styling like bold, italic and underline. You can also use the `SharedString` objects to distinguish logical groupings of text.
+
+```php
+$extractor = new DecoratedTextExtractor();
+$mapping = $extractor->extractStringsAndCreateMappingFile(
+    'markup.xlsx',
+    'markup-extracted.xlsx'
+  );
+  
+$firstSharedString = $mapping[0]; // SharedString object
+$firstSharedString = $firstParagraph[0]; // SharedStringPart object
+
+$firstSharedString->italic = true;
+$firstSharedString->bold = false;
+$firstSharedString->underline = true;
+
+echo $firstSharedString->text; // The quick brown fox jumps over the lazy dog
+$firstSharedString->text = "Several fabulous dixieland jazz groups played with quick tempo.";
+
+$injector = new DecoratedTextInjector();
+$injector->injectMappingAndCreateNewFile(
+    $mapping,
+    'markup-extracted.xlsx',
+    'markup-injected.xlsx'
+  );
+```
+
+
+
 License
 ---------
 Copyright 2020 Label305 B.V.
