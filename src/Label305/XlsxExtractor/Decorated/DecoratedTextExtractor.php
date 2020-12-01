@@ -127,7 +127,9 @@ class DecoratedTextExtractor extends XlsxHandler implements Extractor {
         $result = [];
 
         foreach ($DOMElement->childNodes as $rChild) {
-            $this->parseChildRNode($rChild, $result, $bold, $italic, $underline, $text, $style);
+            if ($rChild instanceof DOMElement) {
+                $this->parseChildRNode($rChild, $result, $bold, $italic, $underline, $text, $style);
+            }
         }
 
         return $result;
@@ -136,55 +138,53 @@ class DecoratedTextExtractor extends XlsxHandler implements Extractor {
 
     /**
      * @param $rChild
-     * @param $result
-     * @param $bold
-     * @param $italic
-     * @param $underline
-     * @param $text
-     * @param $style
+     * @param array $result
+     * @param bool $bold
+     * @param bool $italic
+     * @param bool $underline
+     * @param string|null $text
+     * @param Style|null $style
      */
     protected function parseChildRNode(
-        $rChild,
-        &$result,
-        &$bold,
-        &$italic,
-        &$underline,
-        &$text,
-        &$style
+        DOMElement $rChild,
+        array &$result,
+        bool &$bold,
+        bool &$italic,
+        bool &$underline,
+        ?string &$text,
+        ?Style &$style
     ) {
-        if ($rChild instanceof DOMElement) {
-            switch ($rChild->nodeName) {
-                case "rPr" :
-                    $rFont = null;
-                    $color = null;
-                    $family = null;
-                    $sz = null;
-                    $scheme = null;
-                    $hasStyle = false;
+        switch ($rChild->nodeName) {
+            case "rPr" :
+                $rFont = null;
+                $color = null;
+                $family = null;
+                $sz = null;
+                $scheme = null;
+                $hasStyle = false;
 
-                    foreach ($rChild->childNodes as $propertyNode) {
-                        if ($propertyNode instanceof DOMElement) {
-                            $this->parseStyle($propertyNode,$rFont,$color,$family,$sz,$scheme, $hasStyle);
-                            $this->parseFormatting($propertyNode,$bold,$italic,$underline);
-                        }
+                foreach ($rChild->childNodes as $propertyNode) {
+                    if ($propertyNode instanceof DOMElement) {
+                        $this->parseStyle($propertyNode,$rFont,$color,$family,$sz,$scheme, $hasStyle);
+                        $this->parseFormatting($propertyNode,$bold,$italic,$underline);
                     }
-                    if ($hasStyle) {
-                        $style = new Style($rFont, $color, $family, $sz, $scheme);
-                    }
-                    break;
+                }
+                if ($hasStyle) {
+                    $style = new Style($rFont, $color, $family, $sz, $scheme);
+                }
+                break;
 
-                case "t" :
-                    $text = $rChild->nodeValue;
-            }
+            case "t" :
+                $text = $rChild->nodeValue;
+                break;
+        }
 
+        if ($text !== null && strlen($text) !== 0) {
+            $result[] = new SharedStringPart($text, $bold, $italic, $underline, $style);
 
-            if ($text !== null && strlen($text) !== 0) {
-                $result[] = new SharedStringPart($text, $bold, $italic, $underline, $style);
-
-                // Reset
-                $style = null;
-                $text = null;
-            }
+            // Reset
+            $style = null;
+            $text = null;
         }
     }
 
@@ -199,12 +199,12 @@ class DecoratedTextExtractor extends XlsxHandler implements Extractor {
      */
     private function parseStyle(
         DOMElement $propertyNode,
-        &$rFont,
-        &$color,
-        &$family,
-        &$sz,
-        &$scheme,
-        &$hasStyle
+        ?string &$rFont,
+        ?string &$color,
+        ?string &$family,
+        ?string &$sz,
+        ?string &$scheme,
+        bool &$hasStyle
     ) {
         if ($propertyNode->nodeName === "rFont") {
             $rFont = $propertyNode->getAttribute('val');
@@ -232,9 +232,9 @@ class DecoratedTextExtractor extends XlsxHandler implements Extractor {
      */
     private function parseFormatting(
         DOMElement $propertyNode,
-        &$bold,
-        &$italic,
-        &$underline
+        bool &$bold,
+        bool &$italic,
+        bool &$underline
     ) {
         if ($propertyNode->nodeName == "b") {
             $bold = true;
