@@ -13,25 +13,25 @@ class Style {
     /**
      * @var string|null
      */
-    private $rFont;
+    public $rFont;
     /**
      * @var string|null
      */
-    private $color;
+    public $color;
     /**
      * @var string|null
      */
-    private $family;
+    public $family;
     /**
      * @var string|null
      */
-    private $sz;
+    public $sz;
     /**
      * @var string|null
      */
-    private $scheme;
+    public $scheme;
 
-    function __construct($rFont, $color, $family, $sz, $scheme) {
+    function __construct(?string $rFont, ?string $color, ?string $family, ?string $sz, ?string $scheme) {
         $this->rFont = $rFont;
         $this->color = $color;
         $this->family = $family;
@@ -64,45 +64,5 @@ class Style {
         }
 
         return $value;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getRFont(): ?string
-    {
-        return $this->rFont;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getColor(): ?string
-    {
-        return $this->color;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getFamily(): ?string
-    {
-        return $this->family;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getSz(): ?string
-    {
-        return $this->sz;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getScheme(): ?string
-    {
-        return $this->scheme;
     }
 }
