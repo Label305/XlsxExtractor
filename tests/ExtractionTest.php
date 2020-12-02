@@ -103,13 +103,15 @@ class ExtractionTest extends TestCase {
         $sharedString[] = new SharedStringPart('bold' , true);
         $sharedString[] = new SharedStringPart(' and ');
         $sharedString[] = new SharedStringPart('italic' , false, true);
+        $sharedString[] = new SharedStringPart(' and ');
+        $sharedString[] = new SharedStringPart('underline' , false, false, true);
 
-        $this->assertEquals('This is a test with <strong>bold</strong> and <em>italic</em>', $sharedString->toHTML());
+        $this->assertEquals('This is a test with <strong>bold</strong> and <em>italic</em> and <u>underline</u>', $sharedString->toHTML());
     }
 
     public function test_sharedString_fillWithHTMLDom()
     {
-        $html = 'This is a test with <strong>bold</strong> and <em>italic</em>';
+        $html = 'This is a test with <strong>bold</strong> and <em>italic</em> and <u>underline</u>';
         $html = "<html>" . $html . "</html>";
 
         $htmlDom = new DOMDocument;
@@ -124,6 +126,9 @@ class ExtractionTest extends TestCase {
         $this->assertEquals(' and ', $sharedString[2]->text);
         $this->assertEquals('italic', $sharedString[3]->text);
         $this->assertTrue($sharedString[3]->italic);
+        $this->assertEquals(' and ', $sharedString[4]->text);
+        $this->assertEquals('underline', $sharedString[5]->text);
+        $this->assertTrue($sharedString[5]->underline);
     }
     
 }
