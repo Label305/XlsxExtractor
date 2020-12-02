@@ -64,14 +64,14 @@ $mapping = $extractor->extractStringsAndCreateMappingFile(
   );
   
 $firstSharedString = $mapping[0]; // SharedString object
-$firstSharedString = $firstParagraph[0]; // SharedStringPart object
+$firstSharedStringPart = $firstParagraph[0]; // SharedStringPart object
 
-$firstSharedString->italic = true;
-$firstSharedString->bold = false;
-$firstSharedString->underline = true;
+$firstSharedStringPart->italic = true;
+$firstSharedStringPart->bold = false;
+$firstSharedStringPart->underline = true;
 
-echo $firstSharedString->text; // The quick brown fox jumps over the lazy dog
-$firstSharedString->text = "Several fabulous dixieland jazz groups played with quick tempo.";
+echo $firstSharedStringPart->text; // The quick brown fox jumps over the lazy dog
+$firstSharedStringPart->text = "Several fabulous dixieland jazz groups played with quick tempo.";
 
 $injector = new DecoratedTextInjector();
 $injector->injectMappingAndCreateNewFile(
