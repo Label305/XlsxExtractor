@@ -40,6 +40,18 @@ class Style {
     }
 
     /**
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return ($this->rFont === null || $this->rFont === "") &&
+            ($this->color === null || $this->color === "") &&
+            ($this->family === null || $this->family === "") &&
+            ($this->sz === null || $this->sz === "") &&
+            ($this->scheme === null || $this->scheme === "");
+    }
+
+    /**
      * To docx xml string
      *
      * @return string

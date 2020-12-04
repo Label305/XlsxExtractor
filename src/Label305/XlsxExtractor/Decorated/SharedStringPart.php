@@ -127,13 +127,13 @@ class SharedStringPart {
         if ($this->underline && $firstWrappedInUnderline) {
             $value .= "<u>";
         }
-        if ($this->style !== null && !$this->bold && !$this->italic && !$this->underline) {
+        if ($this->style !== null && !$this->style->isEmpty() && !$this->bold && !$this->italic && !$this->underline) {
             $value .= "<font>";
         }
 
         $value .= htmlentities($this->text);
 
-        if ($this->style !== null && !$this->bold && !$this->italic && !$this->underline) {
+        if ($this->style !== null && !$this->style->isEmpty() && !$this->bold && !$this->italic && !$this->underline) {
             $value .= "</font>";
         }
         if ($this->underline && $lastWrappedInUnderline) {
