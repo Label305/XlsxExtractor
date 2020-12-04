@@ -50,15 +50,13 @@ class SharedString extends ArrayObject
      * @param bool $bold
      * @param bool $italic
      * @param bool $underline
-     * @param bool $hasStyle
      */
     public function fillWithHTMLDom(
         DOMNode $node,
         ?SharedString $originalSharedString = null,
         $bold = false,
         $italic = false,
-        $underline = false,
-        $hasStyle = false
+        $underline = false
     ) {
         if ($node instanceof DOMText) {
             $originalStyle = null;
@@ -79,12 +77,9 @@ class SharedString extends ArrayObject
                 if ($node->nodeName == 'u') {
                     $underline = true;
                 }
-                if ($node->nodeName == 'font') {
-                    $hasStyle = true;
-                }
 
                 foreach ($node->childNodes as $child) {
-                    $this->fillWithHTMLDom($child, $originalSharedString, $bold, $italic, $underline, $hasStyle);
+                    $this->fillWithHTMLDom($child, $originalSharedString, $bold, $italic, $underline);
                 }
             }
         }
@@ -127,7 +122,6 @@ class SharedString extends ArrayObject
         $boldIsActive = false;
         $italicIsActive = false;
         $underlineIsActive = false;
-        $styleActive = false;
 
         for ($i = 0; $i < count($this); $i++) {
 
@@ -151,12 +145,6 @@ class SharedString extends ArrayObject
                 $openUnderline = true;
             }
 
-            $openStyle = false;
-            if ($sharedStringPart->style !== null && !$styleActive) {
-                $styleActive = true;
-                $openStyle = true;
-            }
-
             $nextSharedStringPart = ($i + 1 < count($this)) ? $this[$i + 1] : null;
             $closeBold = false;
             if ($nextSharedStringPart === null || (!$nextSharedStringPart->bold && $boldIsActive)) {
@@ -176,13 +164,7 @@ class SharedString extends ArrayObject
                 $closeUnderline = true;
             }
 
-            $closeStyle = false;
-            if ($nextSharedStringPart === null || ($nextSharedStringPart->style === null && $styleActive)) {
-                $styleActive = false;
-                $closeStyle = true;
-            }
-
-            $result .= $sharedStringPart->toHTML($openBold, $openItalic, $openUnderline, $openStyle, $closeBold, $closeItalic, $closeUnderline, $closeStyle);
+            $result .= $sharedStringPart->toHTML($openBold, $openItalic, $openUnderline, $closeBold, $closeItalic, $closeUnderline);
         }
 
         return $result;
