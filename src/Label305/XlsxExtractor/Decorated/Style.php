@@ -31,7 +31,7 @@ class Style {
      */
     public $scheme;
 
-    function __construct(?string $rFont, ?string $color, ?string $family, ?string $sz, ?string $scheme) {
+    function __construct(?string $rFont = null, ?string $color = null, ?string $family = null, ?string $sz = null, ?string $scheme = null) {
         $this->rFont = $rFont;
         $this->color = $color;
         $this->family = $family;
