@@ -114,11 +114,9 @@ class SharedStringPart {
         $firstWrappedInBold = true,
         $firstWrappedInItalic = true,
         $firstWrappedInUnderline = true,
-        $firstWrappedInStyle = true,
         $lastWrappedInBold = true,
         $lastWrappedInItalic = true,
-        $lastWrappedInUnderline = true,
-        $lastWrappedInStyle = true
+        $lastWrappedInUnderline = true
     ) {
         $value = '';
 
@@ -131,16 +129,15 @@ class SharedStringPart {
         if ($this->underline && $firstWrappedInUnderline) {
             $value .= "<u>";
         }
-        if ($this->style !== null && $lastWrappedInStyle) {
+        if ($this->style !== null && !$this->bold && !$this->italic && !$this->underline) {
             $value .= "<font>";
         }
 
         $value .= htmlentities($this->text);
 
-        if ($this->style !== null && $lastWrappedInStyle) {
+        if ($this->style !== null && !$this->bold && !$this->italic && !$this->underline) {
             $value .= "</font>";
         }
-
         if ($this->underline && $lastWrappedInUnderline) {
             $value .= "</u>";
         }
