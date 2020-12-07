@@ -162,9 +162,9 @@ class SharedString extends ArrayObject
             $nextSharedStringPart = ($i + 1 < count($this)) ? $this[$i + 1] : null;
 
             $closeFont = false;
-            if (($nextSharedStringPart === null || $nextSharedStringPart->style !== null && !$nextSharedStringPart->style->isEmpty()) && $fontIsActive
-            ) {
+            if ($fontIsActive) {
                 $closeFont = true;
+                $fontIsActive = false;
             }
 
             $closeBold = false;

@@ -70,7 +70,7 @@ class ExtractionTest extends TestCase {
         $this->assertEquals(" and ", $mapping[7][2]->text);
         $this->assertEquals("colored", $mapping[7][3]->text);
         $this->assertEquals(" text", $mapping[7][4]->text);
-        $this->assertEquals('This is another description with parially <strong>bold</strong><font> and </font><strong>colored</font></strong> text</font>', $mapping[7]->toHTML());
+        $this->assertEquals('This is another description with parially <strong>bold</strong><font> and </font><strong>colored</strong><font> text</font>', $mapping[7]->toHTML());
 
         $mapping[0][0]->text = "Titel voor sheet";
         $mapping[7][0]->text = "Dit is een andere omschrijving met deels ";
