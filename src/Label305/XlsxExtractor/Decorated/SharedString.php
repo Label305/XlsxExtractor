@@ -123,6 +123,7 @@ class SharedString extends ArrayObject
         $boldIsActive = false;
         $italicIsActive = false;
         $underlineIsActive = false;
+        $fontIsActive = false;
 
         for ($i = 0; $i < count($this); $i++) {
 
@@ -146,7 +147,26 @@ class SharedString extends ArrayObject
                 $openUnderline = true;
             }
 
+            $openFont = false;
+            if ($sharedStringPart->style !== null && !$sharedStringPart->style->isEmpty() &&
+                !$fontIsActive &&
+                !$boldIsActive &&
+                !$italicIsActive &&
+                !$underlineIsActive &&
+                count($this) > 1
+            ) {
+                $openFont = true;
+                $fontIsActive = true;
+            }
+
             $nextSharedStringPart = ($i + 1 < count($this)) ? $this[$i + 1] : null;
+
+            $closeFont = false;
+            if (($nextSharedStringPart === null || $nextSharedStringPart->style !== null && !$nextSharedStringPart->style->isEmpty()) && $fontIsActive
+            ) {
+                $closeFont = true;
+            }
+
             $closeBold = false;
             if ($nextSharedStringPart === null || (!$nextSharedStringPart->bold && $boldIsActive)) {
                 $boldIsActive = false;
@@ -165,7 +185,7 @@ class SharedString extends ArrayObject
                 $closeUnderline = true;
             }
 
-            $result .= $sharedStringPart->toHTML($openBold, $openItalic, $openUnderline, $closeBold, $closeItalic, $closeUnderline);
+            $result .= $sharedStringPart->toHTML($openBold, $openItalic, $openUnderline, $openFont, $closeBold, $closeItalic, $closeUnderline, $closeFont);
         }
 
         return $result;

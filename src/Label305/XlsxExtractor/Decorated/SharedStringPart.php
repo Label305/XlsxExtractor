@@ -103,18 +103,22 @@ class SharedStringPart {
      * @param bool $firstWrappedInBold
      * @param bool $firstWrappedInItalic
      * @param bool $firstWrappedInUnderline
+     * @param bool $firstWrappedInFont
      * @param bool $lastWrappedInBold
      * @param bool $lastWrappedInItalic
      * @param bool $lastWrappedInUnderline
+     * @param bool $lastWrappedInFont
      * @return string HTML string
      */
     public function toHTML(
         $firstWrappedInBold = true,
         $firstWrappedInItalic = true,
         $firstWrappedInUnderline = true,
+        $firstWrappedInFont = true,
         $lastWrappedInBold = true,
         $lastWrappedInItalic = true,
-        $lastWrappedInUnderline = true
+        $lastWrappedInUnderline = true,
+        $lastWrappedInFont = true
     ) {
         $value = '';
 
@@ -127,13 +131,13 @@ class SharedStringPart {
         if ($this->underline && $firstWrappedInUnderline) {
             $value .= "<u>";
         }
-        if ($this->style !== null && !$this->style->isEmpty() && !$this->bold && !$this->italic && !$this->underline) {
+        if ($this->style !== null && !$this->style->isEmpty() && $firstWrappedInFont) {
             $value .= "<font>";
         }
 
         $value .= htmlentities($this->text);
 
-        if ($this->style !== null && !$this->style->isEmpty() && !$this->bold && !$this->italic && !$this->underline) {
+        if ($this->style !== null && !$this->style->isEmpty() && $lastWrappedInFont) {
             $value .= "</font>";
         }
         if ($this->underline && $lastWrappedInUnderline) {
