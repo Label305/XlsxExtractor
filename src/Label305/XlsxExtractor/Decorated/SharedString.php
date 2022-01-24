@@ -32,7 +32,7 @@ class SharedString extends ArrayObject
         $html = str_replace("<br>", "<br />", $html);
         $html = str_replace("&nbsp;", " ", $html);
         $htmlDom = new DOMDocument;
-        @$htmlDom->loadXml(preg_replace('/&(?!#?[a-z0-9]+;)/', '&amp;', html_entity_decode($html)));
+        @$htmlDom->loadXml(preg_replace('/&(?!#?[a-z0-9]+;)/', '&amp;', $html));
 
         $sharedString = new SharedString();
         if ($htmlDom->documentElement !== null) {

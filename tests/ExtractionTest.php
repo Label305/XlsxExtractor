@@ -168,5 +168,66 @@ class ExtractionTest extends TestCase {
         unlink(__DIR__.'/fixtures/markup-injected-extracted.xlsx');
         unlink(__DIR__.'/fixtures/markup-injected.xlsx');
     }
+
+    /**
+     * When a file contains special characters (i.e. `<`, `>`),
+     * These should also be present in the extracted mapping
+     */
+    public function testSpecialCharactersInFile()
+    {
+        /* Given */
+        $file = __DIR__ . '/fixtures/encoding.xlsx';
+        $extractedFile = __DIR__ . '/fixtures/encoding-extracted.xlsx';
+
+        /* When */
+        $extractor = new DecoratedTextExtractor();
+        $mapping = $extractor->extractStringsAndCreateMappingFile($file, $extractedFile);
+
+        /* Then */
+        // text should contain encoded translations
+        $this->assertEquals("3 < 5", $mapping[0][0]->text);
+        $this->assertEquals("<font> tag is deprecated", $mapping[1][0]->text);
+        $this->assertEquals(">< is not an X", $mapping[2][0]->text);
+
+        unlink($extractedFile);
+    }
+
+    /**
+     * When translations are injected with encoded characters (i.e. &lt;, &gt;),
+     * These should also be present and encoded when extracting the injected file
+     */
+    public function testEncodedCharactersInTranslation()
+    {
+        /* Given */
+        $file = __DIR__ . '/fixtures/encoding.xlsx';
+        $extractedFile = __DIR__ . '/fixtures/encoding-extracted.xlsx';
+        $injectedFile = __DIR__ . '/fixtures/encoding-injected.xlsx';
+        $extractedInjectedFile = __DIR__ . '/fixtures/encoding-extracted-injected.xlsx';
+
+        $extractor = new DecoratedTextExtractor();
+        $mapping = $extractor->extractStringsAndCreateMappingFile($file, $extractedFile);
+
+        // decoded (loadXml) and encoded again (toHTML)
+        $mapping[0][0]->text = SharedString::paragraphWithHTML("tree &lt; five")->toHTML();
+        $mapping[1][0]->text = SharedString::paragraphWithHTML("La balise &lt;font&gt; est depreciee")->toHTML();
+        $mapping[2][0]->text = SharedString::paragraphWithHTML("&gt;&lt; nest pas un X")->toHTML();
+
+        /* When */
+        $injector = new DecoratedTextInjector();
+        $injector->injectMappingAndCreateNewFile($mapping, $extractedFile, $injectedFile);
+
+        $otherExtractor = new DecoratedTextExtractor();
+        $otherMapping = $otherExtractor->extractStringsAndCreateMappingFile($injectedFile, $extractedInjectedFile);
+
+        /* Then */
+        // text should contain encoded translations
+        $this->assertEquals("tree &lt; five", $otherMapping[0][0]->text);
+        $this->assertEquals("La balise &lt;font&gt; est depreciee", $otherMapping[1][0]->text);
+        $this->assertEquals("&gt;&lt; nest pas un X", $otherMapping[2][0]->text);
+
+        unlink($extractedFile);
+        unlink($injectedFile);
+        unlink($extractedInjectedFile);
+    }
     
 }
