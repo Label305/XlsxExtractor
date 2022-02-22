@@ -28,7 +28,7 @@ class SharedString extends ArrayObject
      */
     public static function paragraphWithHTML(string $html,?SharedString $originalSharedString = null)
     {
-        $html = "<html>" . strip_tags($html, '<br /><br><b><strong><em><i><u><font>') . "</html>";
+        $html = "<html>" . $html . "</html>";
         $html = str_replace("<br>", "<br />", $html);
         $html = str_replace("&nbsp;", " ", $html);
         $htmlDom = new DOMDocument;
@@ -58,7 +58,11 @@ class SharedString extends ArrayObject
         $italic = false,
         $underline = false
     ) {
-        if ($node instanceof DOMText) {
+        if ($node instanceof DOMNode && ($node->nodeName === 'a' || $node->nodeName === 'span') || $node->nodeName === 'div') {
+            $this[] = new SharedStringPart($node->ownerDocument->saveXML($node), $bold, $italic, $underline, null);
+            $this->nextTagIdentifier++;
+
+        } else if ($node instanceof DOMText) {
             $originalStyle = null;
             if ($originalSharedString !== null) {
                 $originalStyle = $this->getOriginalStyle($node, $originalSharedString);
