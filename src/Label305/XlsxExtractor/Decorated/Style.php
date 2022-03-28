@@ -31,7 +31,13 @@ class Style {
      */
     public $scheme;
 
-    function __construct(?string $rFont = null, ?string $color = null, ?string $family = null, ?string $sz = null, ?string $scheme = null) {
+    function __construct(
+        ?string $rFont = null,
+        ?string $color = null,
+        ?string $family = null,
+        ?string $sz = null,
+        ?string $scheme = null
+    ) {
         $this->rFont = $rFont;
         $this->color = $color;
         $this->family = $family;
@@ -42,7 +48,7 @@ class Style {
     /**
      * @return bool
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return ($this->rFont === null || $this->rFont === "") &&
             ($this->color === null || $this->color === "") &&
@@ -56,7 +62,7 @@ class Style {
      *
      * @return string
      */
-    public function toXlsxXML()
+    public function toXlsxXML(): string
     {
         $value = '';
         if ($this->rFont !== null) {

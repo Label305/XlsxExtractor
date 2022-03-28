@@ -19,7 +19,7 @@ class DecoratedTextInjector extends XlsxHandler implements Injector {
      * @throws XlsxFileException
      * @return void
      */
-    public function injectMappingAndCreateNewFile(array $mapping, string $fileToInjectLocationPath, string $saveLocationPath)
+    public function injectMappingAndCreateNewFile(array $mapping, string $fileToInjectLocationPath, string $saveLocationPath): void
     {
         $prepared = $this->prepareDocumentForReading($fileToInjectLocationPath);
 

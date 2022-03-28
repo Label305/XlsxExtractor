@@ -13,11 +13,11 @@ abstract class ZipHandler {
      * @param string $tempPath
      * @throws XlsxFileException
      */
-    protected function openZip(string $filePath, string $tempPath)
+    protected function openZip(string $filePath, string $tempPath): void
     {
         $zip = new ZipArchive;
         $opened = $zip->open($filePath);
-        if ($opened !== TRUE) {
+        if ($opened !== true) {
             throw new XlsxFileException( 'Could not open zip archive ' . $filePath . '[' . $opened . ']' );
         }
         $zip->extractTo($tempPath);
@@ -29,7 +29,7 @@ abstract class ZipHandler {
      * @param string $archiveLocation
      * @throws XlsxFileException
      */
-    protected function buildZip(string $saveLocation, string $archiveLocation)
+    protected function buildZip(string $saveLocation, string $archiveLocation): void
     {
         //Create a pptx file again
         $zip = new ZipArchive;

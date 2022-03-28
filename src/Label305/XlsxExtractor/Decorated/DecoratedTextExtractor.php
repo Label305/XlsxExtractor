@@ -39,7 +39,7 @@ class DecoratedTextExtractor extends XlsxHandler implements Extractor {
         return $result;
     }
 
-    protected function replaceAndMapValues(DOMNode $node) {
+    protected function replaceAndMapValues(DOMNode $node): array {
         $result = [];
 
         if ($node instanceof DOMElement && $node->nodeName == "si") {
@@ -61,10 +61,10 @@ class DecoratedTextExtractor extends XlsxHandler implements Extractor {
 
     /**
      * @param DOMNode $DOMNode
-     * @param $result
+     * @param array $result
      * @return array
      */
-    protected function replaceAndMapValuesForParagraph(DOMNode $DOMNode, &$result)
+    protected function replaceAndMapValuesForParagraph(DOMNode $DOMNode, array &$result)
     {
         $firstTextChild = null;
         $otherNodes = [];

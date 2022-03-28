@@ -26,7 +26,7 @@ class SharedString extends ArrayObject
      * @param SharedString|null $originalSharedString
      * @return SharedString
      */
-    public static function paragraphWithHTML(string $html,?SharedString $originalSharedString = null)
+    public static function paragraphWithHTML(string $html,?SharedString $originalSharedString = null): SharedString
     {
         $html = "<html>" . $html . "</html>";
         $html = str_replace("<br>", "<br />", $html);
@@ -54,9 +54,9 @@ class SharedString extends ArrayObject
     public function fillWithHTMLDom(
         DOMNode $node,
         ?SharedString $originalSharedString = null,
-        $bold = false,
-        $italic = false,
-        $underline = false
+        bool $bold = false,
+        bool $italic = false,
+        bool $underline = false
     ) {
         if ($node instanceof DOMNode && ($node->nodeName === 'a' || $node->nodeName === 'span') || $node->nodeName === 'div') {
             $this[] = new SharedStringPart($node->ownerDocument->saveXML($node), $bold, $italic, $underline, null);
@@ -95,10 +95,10 @@ class SharedString extends ArrayObject
      * @param SharedString $originalSharedString
      * @return Style|null
      */
-    private function getOriginalStyle(DOMText $node, SharedString $originalSharedString)
+    private function getOriginalStyle(DOMText $node, SharedString $originalSharedString): ?Style
     {
         $originalStyle = null;
-        if (array_key_exists($this->nextTagIdentifier, $originalSharedString)) {
+        if (array_key_exists($this->nextTagIdentifier, $originalSharedString->getArrayCopy())) {
             // Sometimes we extract a single space, but in the Paragraph the space is at the beginning of the sentence
             $startsWithSpace = strlen($node->nodeValue) > strlen(ltrim($node->nodeValue));
             if ($startsWithSpace && strlen(ltrim($originalSharedString[$this->nextTagIdentifier]->text)) === 0) {
@@ -120,7 +120,7 @@ class SharedString extends ArrayObject
      *
      * @return string
      */
-    public function toHTML()
+    public function toHTML(): string
     {
         $result = '';
 

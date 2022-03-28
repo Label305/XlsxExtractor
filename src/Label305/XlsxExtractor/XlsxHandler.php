@@ -49,7 +49,7 @@ abstract class XlsxHandler extends ZipHandler {
      * @returns array With "document" key, "dom" and "archive" key both are paths. "document" points to the xl/sharedStrings.xml
      * and "archive" points to the root of the archive. "dom" is the DOMDocument object for the slide.xml.
      */
-    protected function prepareDocumentForReading(string $filePath)
+    protected function prepareDocumentForReading(string $filePath): array
     {
         //Make sure we have a complete and correct path
         $filePath = realpath($filePath) ?: $filePath;
@@ -108,11 +108,11 @@ abstract class XlsxHandler extends ZipHandler {
      * @param $dir
      * @return bool
      */
-    protected function rmdirRecursive($dir)
+    protected function rmdirRecursive($dir): bool
     {
         $files = array_diff(scandir($dir), array('.', '..'));
         foreach($files as $file) {
-            (is_dir("$dir/$file")) ? rmdirRecursive("$dir/$file") : unlink("$dir/$file");
+            (is_dir("$dir/$file")) ? $this->rmdirRecursive("$dir/$file") : unlink("$dir/$file");
         }
         return rmdir($dir);
     }
