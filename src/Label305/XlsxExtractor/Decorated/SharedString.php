@@ -103,7 +103,7 @@ class SharedString extends ArrayObject
             $startsWithSpace = strlen($node->nodeValue) > strlen(ltrim($node->nodeValue));
             if ($startsWithSpace && strlen(ltrim($originalSharedString[$this->nextTagIdentifier]->text)) === 0) {
                 // When the current paragraph has no length it may be the space at the beginning
-                if (array_key_exists($this->nextTagIdentifier + 1, $originalSharedString)) {
+                if (array_key_exists($this->nextTagIdentifier + 1, $originalSharedString->getArrayCopy())) {
                     // Add the next paragraph style
                     $originalStyle = $originalSharedString[$this->nextTagIdentifier + 1]->style;
                     $this->nextTagIdentifier++;

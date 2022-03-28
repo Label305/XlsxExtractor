@@ -57,32 +57,8 @@ class SharedStringPart {
      */
     public function toXlsxXML(): string
     {
-        $value = '<r>';
-
-        if ($this->hasMarkup()) {
-
-            $value .= '<rPr>';
-            if ($this->bold) {
-                $value .= '<b/>';
-            }
-            if ($this->italic) {
-                $value .= '<i/>';
-            }
-            if ($this->underline) {
-                $value .= '<u/>';
-            }
-            if ($this->style !== null) {
-                $value .= $this->style->toXlsxXML();
-            }
-            $value .= '</rPr>';
-            $value .= '<t xml:space="preserve">' . htmlentities($this->text, ENT_XML1) . "</t>";
-        } else {
-            $value .= '<t>' . htmlentities($this->text, ENT_XML1) . "</t>";
-        }
-
-        $value .= '</r>';
-
-        return $value;
+        // Markup is removed since version 0.2.1 because the deepest element (<t>) is parsed.
+        return '<t xml:space="preserve">' . htmlentities($this->text, ENT_XML1) . '</t>';
     }
 
     private function hasMarkup(): bool
