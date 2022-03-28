@@ -229,5 +229,58 @@ class ExtractionTest extends TestCase {
         unlink($injectedFile);
         unlink($extractedInjectedFile);
     }
+
+    public function testMultiLineContent()
+    {
+        /* Given */
+        $file = __DIR__ . '/fixtures/multi-line-content.xlsx';
+        $extractedFile = __DIR__ . '/fixtures/multi-line-content-extracted.xlsx';
+        $injectedFile = __DIR__ . '/fixtures/multi-line-content-injected.xlsx';
+        $extractedInjectedFile = __DIR__ . '/fixtures/multi-line-content-extracted-injected.xlsx';
+
+        $extractor = new DecoratedTextExtractor();
+        $mapping = $extractor->extractStringsAndCreateMappingFile($file, $extractedFile);
+
+        $this->assertEquals("Omschrijving", $mapping[0][0]->text);
+        $this->assertEquals("Item 614:", $mapping[1][0]->text);
+        $this->assertEquals("
+Zijn je trampolineveren toe aan vervanging? Door jouw trampoline te voorzien van nieuwe Brand Name veren, springt je trampoline weer als nieuw!
+
+De goudkleurige veren van Brand Name zijn conisch van vorm waardoor je geweldige sprongen kan maken en zacht kan landen. Ook zijn de veren dubbel gegalvaniseerd, zodat ze bestand zijn tegen roestvorming. 
+
+Deze Brand Name veren hebben een lengte van 140 mm en zijn geschikt voor onderstaande ", $mapping[1][1]->text);
+
+
+        $mapping[0][0]->text = SharedString::paragraphWithHTML("Description")->toHTML();
+        $mapping[1][0]->text = SharedString::paragraphWithHTML("Unit 614:")->toHTML();
+        $mapping[1][1]->text = SharedString::paragraphWithHTML("
+Do your trampoline springs need to be replaced? By providing your trampoline with new Brand Name springs, your trampoline will jump like new!
+
+Brand Name's gold-colored feathers are conical in shape, allowing you to make amazing jumps and land softly. The springs are also double galvanized, so that they are resistant to rusting.
+
+These Brand Name springs have a length of 140 mm and are suitable for the following ")->toHTML();
+
+        /* When */
+        $injector = new DecoratedTextInjector();
+        $injector->injectMappingAndCreateNewFile($mapping, $extractedFile, $injectedFile);
+
+        $otherExtractor = new DecoratedTextExtractor();
+        $otherMapping = $otherExtractor->extractStringsAndCreateMappingFile($injectedFile, $extractedInjectedFile);
+
+        /* Then */
+        // text should contain encoded translations
+        $this->assertEquals("Description", $otherMapping[0][0]->text);
+        $this->assertEquals("Unit 614:", $otherMapping[1][0]->text);
+        $this->assertEquals("
+Do your trampoline springs need to be replaced? By providing your trampoline with new Brand Name springs, your trampoline will jump like new!
+
+Brand Name's gold-colored feathers are conical in shape, allowing you to make amazing jumps and land softly. The springs are also double galvanized, so that they are resistant to rusting.
+
+These Brand Name springs have a length of 140 mm and are suitable for the following ", $otherMapping[1][1]->text);
+
+        unlink($extractedFile);
+        unlink($injectedFile);
+        unlink($extractedInjectedFile);
+    }
     
 }

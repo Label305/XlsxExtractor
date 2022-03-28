@@ -108,11 +108,11 @@ abstract class XlsxHandler extends ZipHandler {
      * @param $dir
      * @return bool
      */
-    protected function rmdirRecursive($dir)
+    protected function rmdirRecursive($dir): bool
     {
         $files = array_diff(scandir($dir), array('.', '..'));
         foreach($files as $file) {
-            (is_dir("$dir/$file")) ? rmdirRecursive("$dir/$file") : unlink("$dir/$file");
+            (is_dir("$dir/$file")) ? $this->rmdirRecursive("$dir/$file") : unlink("$dir/$file");
         }
         return rmdir($dir);
     }
