@@ -55,7 +55,7 @@ class SharedStringPart {
      *
      * @return string
      */
-    public function toXlsxXML()
+    public function toXlsxXML(): string
     {
         $value = '<r>';
 
@@ -85,7 +85,7 @@ class SharedStringPart {
         return $value;
     }
 
-    private function hasMarkup()
+    private function hasMarkup(): bool
     {
         if ($this->style !== null) {
             return true;
@@ -119,7 +119,7 @@ class SharedStringPart {
         $lastWrappedInItalic = true,
         $lastWrappedInUnderline = true,
         $lastWrappedInFont = true
-    ) {
+    ): string {
         $value = '';
 
         if ($this->bold && $firstWrappedInBold) {

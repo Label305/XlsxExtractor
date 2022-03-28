@@ -10,7 +10,7 @@ interface TextExtractor {
     /**
      * @param DOMElement $DOMElement
      * The result is the array which contains te sentences
-     * @return SharedStringPart[]
+     * @return SharedStringPart[]|array
      */
-    public function extract(DOMElement $DOMElement);
+    public function extract(DOMElement $DOMElement): array;
 }

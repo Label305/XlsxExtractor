@@ -19,7 +19,7 @@ class BasicInjector extends XlsxHandler implements Injector {
      * @throws XlsxParsingException
      * @throws XlsxFileException
      */
-    public function injectMappingAndCreateNewFile(array $mapping, string $fileToInjectLocationPath, string $saveLocationPath)
+    public function injectMappingAndCreateNewFile(array $mapping, string $fileToInjectLocationPath, string $saveLocationPath): void
     {
         $prepared = $this->prepareDocumentForReading($fileToInjectLocationPath);
 
@@ -32,7 +32,7 @@ class BasicInjector extends XlsxHandler implements Injector {
      * @param DOMNode $node
      * @param array $mapping
      */
-    protected function assignMappedValues(DOMNode $node, array $mapping)
+    protected function assignMappedValues(DOMNode $node, array $mapping): void
     {
         if ($node instanceof DOMText) {
             $results = [];

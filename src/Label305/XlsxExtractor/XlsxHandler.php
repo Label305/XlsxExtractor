@@ -49,7 +49,7 @@ abstract class XlsxHandler extends ZipHandler {
      * @returns array With "document" key, "dom" and "archive" key both are paths. "document" points to the xl/sharedStrings.xml
      * and "archive" points to the root of the archive. "dom" is the DOMDocument object for the slide.xml.
      */
-    protected function prepareDocumentForReading(string $filePath)
+    protected function prepareDocumentForReading(string $filePath): array
     {
         //Make sure we have a complete and correct path
         $filePath = realpath($filePath) ?: $filePath;
