@@ -2,12 +2,9 @@
 
 namespace Label305\XlsxExtractor\Decorated;
 
-
-use DOMDocument;
 use DOMElement;
 use DOMNode;
 use DOMText;
-use Label305\XlsxExtractor\Decorated\Extractors\RNodeTextExtractor;
 use Label305\XlsxExtractor\XlsxFileException;
 use Label305\XlsxExtractor\XlsxHandler;
 use Label305\XlsxExtractor\XlsxParsingException;
@@ -66,48 +63,29 @@ class DecoratedTextExtractor extends XlsxHandler implements Extractor {
      */
     protected function replaceAndMapValuesForParagraph(DOMNode $DOMNode, array &$result)
     {
-        $firstTextChild = null;
-        $otherNodes = [];
-        $parts = new SharedString();
-
+        $foundDomNode = null;
+        $foundSharedStringPart = null;
+        $sharedString = new SharedString();
         if ($DOMNode->childNodes !== null) {
-            foreach ($DOMNode->childNodes as $DOMNodeChild) {
 
+            // Each <r> tag contains one <t> tag with contents
+            foreach ($DOMNode->childNodes as $key => $DOMNodeChild) {
                 if ($DOMNodeChild instanceof DOMElement && $DOMNodeChild->nodeName === "t") {
-                    $parts[] = new SharedStringPart($DOMNodeChild->nodeValue);
-                    $firstTextChild = $DOMNodeChild;
 
-                } elseif ($DOMNodeChild instanceof DOMElement && $DOMNodeChild->nodeName === "r") {
+                    $sharedString[] = new SharedStringPart($DOMNodeChild->nodeValue);
 
-                    // Parse results
-                    $sharedStringParts = (new RNodeTextExtractor())->extract($DOMNodeChild);
-                    if (count($sharedStringParts) !== 0) {
-                        foreach ($sharedStringParts as $sharedStringPart) {
-                            $parts[] = $sharedStringPart;
-                        }
-                        if ($firstTextChild === null) {
-                            $firstTextChild = $DOMNodeChild;
-                        } else {
-                            $otherNodes[] = $DOMNodeChild;
-                        }
-                    }
+                    $replacementNode = new DOMText();
+                    $replacementNode->nodeValue = "%" . $this->nextTagIdentifier . "%";
+                    $DOMNode->replaceChild($replacementNode, $DOMNodeChild);
+
+                    $result[$this->nextTagIdentifier] = $sharedString;
+                    $this->nextTagIdentifier++;
+
+                    continue;
 
                 } elseif ($DOMNodeChild instanceof DOMElement) {
                     $this->replaceAndMapValuesForParagraph($DOMNodeChild, $result);
                 }
-            }
-
-            if ($firstTextChild !== null) {
-                $replacementNode = new DOMText();
-                $replacementNode->nodeValue = "%" . $this->nextTagIdentifier . "%";
-                $DOMNode->replaceChild($replacementNode, $firstTextChild);
-
-                foreach ($otherNodes as $otherNode) {
-                    $DOMNode->removeChild($otherNode);
-                }
-
-                $result[$this->nextTagIdentifier] = $parts;
-                $this->nextTagIdentifier++;
             }
         }
 

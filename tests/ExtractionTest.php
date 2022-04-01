@@ -66,18 +66,17 @@ class ExtractionTest extends TestCase {
 
         $this->assertEquals("Title for sheet", $mapping[0][0]->text);
         $this->assertEquals("This is another description with parially ", $mapping[7][0]->text);
-        $this->assertEquals("bold", $mapping[7][1]->text);
-        $this->assertEquals(" and ", $mapping[7][2]->text);
-        $this->assertEquals("colored", $mapping[7][3]->text);
-        $this->assertEquals(" text", $mapping[7][4]->text);
-        $this->assertEquals('This is another description with parially <strong>bold</strong><font> and </font><strong>colored</strong><font> text</font>', $mapping[7]->toHTML());
+        $this->assertEquals("bold", $mapping[8][0]->text);
+        $this->assertEquals(" and ", $mapping[9][0]->text);
+        $this->assertEquals("colored", $mapping[10][0]->text);
+        $this->assertEquals(" text", $mapping[11][0]->text);
 
         $mapping[0][0]->text = "Titel voor sheet";
         $mapping[7][0]->text = "Dit is een andere omschrijving met deels ";
-        $mapping[7][1]->text = "dikgedrukt";
-        $mapping[7][2]->text = " en ";
-        $mapping[7][3]->text = "gekleurde";
-        $mapping[7][4]->text = " tekst";
+        $mapping[8][0]->text = "dikgedrukt";
+        $mapping[9][0]->text = " en ";
+        $mapping[10][0]->text = "gekleurde";
+        $mapping[11][0]->text = " tekst";
 
         $injector = new DecoratedTextInjector();
         $injector->injectMappingAndCreateNewFile($mapping, __DIR__. '/fixtures/markup-extracted.xlsx', __DIR__. '/fixtures/markup-injected.xlsx');
@@ -87,10 +86,10 @@ class ExtractionTest extends TestCase {
 
         $this->assertEquals("Titel voor sheet", $otherMapping[0][0]->text);
         $this->assertEquals("Dit is een andere omschrijving met deels ", $otherMapping[7][0]->text);
-        $this->assertEquals("dikgedrukt", $otherMapping[7][1]->text);
-        $this->assertEquals(" en ", $otherMapping[7][2]->text);
-        $this->assertEquals("gekleurde", $otherMapping[7][3]->text);
-        $this->assertEquals(" tekst", $otherMapping[7][4]->text);
+        $this->assertEquals("dikgedrukt", $otherMapping[8][0]->text);
+        $this->assertEquals(" en ", $otherMapping[9][0]->text);
+        $this->assertEquals("gekleurde", $otherMapping[10][0]->text);
+        $this->assertEquals(" tekst", $otherMapping[11][0]->text);
 
         unlink(__DIR__.'/fixtures/markup-extracted.xlsx');
         unlink(__DIR__.'/fixtures/markup-injected-extracted.xlsx');
@@ -142,8 +141,12 @@ class ExtractionTest extends TestCase {
         $mapping = $extractor->extractStringsAndCreateMappingFile(__DIR__. '/fixtures/markup.xlsx', __DIR__. '/fixtures/markup-extracted.xlsx');
 
         $translations = [
-            'Titel voor slide',
-            'Dit is een andere omschrijving met deels <strong>dikgedruk</strong> en <strong>gekleurde</strong> <font>tekst</font>',
+            0 => 'Titel voor slide',
+            7 => 'Dit is een andere omschrijving met deels',
+            8 => 'dikgedruk',
+            9 => ' en ',
+            10 => 'gekleurde',
+            11 => ' tekst',
         ];
 
         foreach ($translations as $key => $translation) {
@@ -157,12 +160,11 @@ class ExtractionTest extends TestCase {
         $otherMapping = $otherExtractor->extractStringsAndCreateMappingFile(__DIR__. '/fixtures/markup-injected.xlsx', __DIR__. '/fixtures/markup-injected-extracted.xlsx');
 
         $this->assertEquals('Titel voor slide', $otherMapping[0][0]->text);
-        $this->assertEquals('Dit is een andere omschrijving met deels ', $otherMapping[1][0]->text);
-        $this->assertEquals('dikgedruk', $otherMapping[1][1]->text);
-        $this->assertEquals(' en ', $otherMapping[1][2]->text);
-        $this->assertEquals('gekleurde', $otherMapping[1][3]->text);
-        $this->assertEquals(' ', $otherMapping[1][4]->text);
-        $this->assertEquals('tekst', $otherMapping[1][5]->text);
+        $this->assertEquals('Dit is een andere omschrijving met deels', $otherMapping[7][0]->text);
+        $this->assertEquals('dikgedruk', $otherMapping[8][0]->text);
+        $this->assertEquals(' en ', $otherMapping[9][0]->text);
+        $this->assertEquals('gekleurde', $otherMapping[10][0]->text);
+        $this->assertEquals(' tekst', $otherMapping[11][0]->text);
 
         unlink(__DIR__.'/fixtures/markup-extracted.xlsx');
         unlink(__DIR__.'/fixtures/markup-injected-extracted.xlsx');
@@ -248,12 +250,12 @@ Zijn je trampolineveren toe aan vervanging? Door jouw trampoline te voorzien van
 
 De goudkleurige veren van Brand Name zijn conisch van vorm waardoor je geweldige sprongen kan maken en zacht kan landen. Ook zijn de veren dubbel gegalvaniseerd, zodat ze bestand zijn tegen roestvorming. 
 
-Deze Brand Name veren hebben een lengte van 140 mm en zijn geschikt voor onderstaande ", $mapping[1][1]->text);
+Deze Brand Name veren hebben een lengte van 140 mm en zijn geschikt voor onderstaande ", $mapping[2][0]->text);
 
 
         $mapping[0][0]->text = SharedString::paragraphWithHTML("Description")->toHTML();
         $mapping[1][0]->text = SharedString::paragraphWithHTML("Unit 614:")->toHTML();
-        $mapping[1][1]->text = SharedString::paragraphWithHTML("
+        $mapping[2][0]->text = SharedString::paragraphWithHTML("
 Do your trampoline springs need to be replaced? By providing your trampoline with new Brand Name springs, your trampoline will jump like new!
 
 Brand Name's gold-colored feathers are conical in shape, allowing you to make amazing jumps and land softly. The springs are also double galvanized, so that they are resistant to rusting.
@@ -276,7 +278,7 @@ Do your trampoline springs need to be replaced? By providing your trampoline wit
 
 Brand Name's gold-colored feathers are conical in shape, allowing you to make amazing jumps and land softly. The springs are also double galvanized, so that they are resistant to rusting.
 
-These Brand Name springs have a length of 140 mm and are suitable for the following ", $otherMapping[1][1]->text);
+These Brand Name springs have a length of 140 mm and are suitable for the following ", $otherMapping[2][0]->text);
 
         unlink($extractedFile);
         unlink($injectedFile);
