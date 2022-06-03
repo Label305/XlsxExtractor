@@ -29,7 +29,8 @@ class SharedString extends ArrayObject
     public static function paragraphWithHTML(string $html,?SharedString $originalSharedString = null): SharedString
     {
         $html = "<html>" . $html . "</html>";
-        $html = str_replace("<br>", "<br />", $html);
+        $html = str_replace("<br />", "<br>", $html);
+        $html = str_replace("<br>", "\n", $html);
         $html = str_replace("&nbsp;", " ", $html);
         $htmlDom = new DOMDocument;
         @$htmlDom->loadXml(preg_replace('/&(?!#?[a-z0-9]+;)/', '&amp;', $html));
