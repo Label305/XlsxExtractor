@@ -58,7 +58,7 @@ class SharedStringPart {
     public function toXlsxXML(): string
     {
         // Markup is removed since version 0.2.1 because the deepest element (<t>) is parsed.
-        return '<t xml:space="preserve">' . htmlentities($this->text, ENT_XML1) . '</t>';
+        return '<t xml:space="preserve">' . htmlentities($this->text ?? '', ENT_XML1) . '</t>';
     }
 
     private function hasMarkup(): bool
@@ -111,7 +111,7 @@ class SharedStringPart {
             $value .= "<font>";
         }
 
-        $value .= htmlentities($this->text);
+        $value .= htmlentities($this->text ?? '', ENT_XML1);
 
         if ($this->style !== null && !$this->style->isEmpty() && $lastWrappedInFont) {
             $value .= "</font>";
